@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/near"
+        android:icon="@mipmap/near"
+        android:title="Nearby" />
+    <item
+        android:id="@+id/travel"
+        android:icon="@mipmap/travel"
+        android:title="Travel" />
+
+    <item
+        android:id="@+id/inter"
+        android:icon="@mipmap/interactive"
+        android:title="Interactive" />
+    <item
+        android:id="@+id/share"
+        android:icon="@mipmap/share"
+        android:title="Share" />
+    <item
+        android:id="@+id/setting"
+        android:icon="@mipmap/setting"
+        android:title="Setting" />
+
+</menu>
