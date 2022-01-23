@@ -54,7 +54,8 @@ dependencies {
     implementation 'com.nightonke:jellytogglebutton:1.0.2'
     implementation 'com.github.qiugang:Thunder:v0.1'
     implementation 'com.alibaba:fastjson:1.2.76'
-    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.7'
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
     implementation 'com.github.hanuor:pearl:0.0.8'
     implementation 'io.github.yuweiguocn:SquareLoading:1.3.0'
+    implementation 'com.gjiazhe:PanoramaImageView:1.0'
 }

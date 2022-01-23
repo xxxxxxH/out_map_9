@@ -2,39 +2,37 @@ package net.basicmodel.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.alibaba.fastjson.JSON
 import com.alibaba.fastjson.TypeReference
-import com.chad.library.adapter.base.BaseQuickAdapter
-import com.chad.library.adapter.base.listener.OnItemChildClickListener
-import com.chad.library.adapter.base.listener.OnItemClickListener
 import kotlinx.android.synthetic.main.activity_details.*
-import kotlinx.android.synthetic.main.activity_interactive.*
-import kotlinx.android.synthetic.main.activity_interactive.loading
-import kotlinx.android.synthetic.main.activity_interactive.recycler
 import me.originqiu.library.CallBuilder
 import me.originqiu.library.Thunder
 import net.basicmodel.R
-import net.basicmodel.adapter.InterAdapter
+import net.basicmodel.adapter.DetailsAdapter
 import net.basicmodel.entity.DataEntity
-import net.basicmodel.utils.CommonUtils
 
+class DetailsActivity : AppCompatActivity() {
+    private val originEntity: DataEntity by lazy {
+        intent.getSerializableExtra("data") as DataEntity
+    }
 
-class InteractiveActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_interactive)
+        setContentView(R.layout.activity_details)
+        val key = originEntity.key
+        val url = "https://www.google.com/streetview/feed/gallery/collection/$key.json"
         Thunder.with(this)
             .assign(
-                CallBuilder().url(CommonUtils.url)
+                CallBuilder().url(url)
                     .buildGet()
             )
-            .finish {response->
+            .finish { response ->
                 // handle response here
+
                 val data = ArrayList<DataEntity>()
                 val map: Map<String, DataEntity> =
                     JSON.parseObject(
@@ -45,41 +43,34 @@ class InteractiveActivity : AppCompatActivity() {
                 do {
                     val en: Map.Entry<String, DataEntity> = it.next()
                     val json = JSON.toJSON(en.value)
-                    val entity: DataEntity =
+                    val entity1: DataEntity =
                         JSON.parseObject(json.toString(), DataEntity::class.java)
-                    entity.key = en.key
-                    if (TextUtils.isEmpty(entity.panoid)) {
-                        continue
+                    entity1.pannoId = entity1.panoid
+                    if (originEntity.fife) {
+                        entity1.imageUrl =
+                            "https://lh4.googleusercontent.com/" + entity1.pannoId + "/w400-h300-fo90-ya0-pi0/"
                     } else {
-                        if (entity.panoid == "LiAWseC5n46JieDt9Dkevw") {
-                            continue
-                        }
+                        entity1.imageUrl =
+                            "https://geo0.ggpht.com/cbk?output=thumbnail&thumb=2&panoid=" + entity1.panoid
                     }
-                    if (entity.fife) {
-                        entity.imageUrl =
-                            "https://lh4.googleusercontent.com/" + entity.panoid + "/w400-h300-fo90-ya0-pi0/"
-                        continue
-                    } else {
-                        entity.imageUrl =
-                            "https://geo0.ggpht.com/cbk?output=thumbnail&thumb=2&panoid=" + entity.panoid
-                    }
-                    data.add(entity)
+                    data.add(entity1)
+
                 } while (it.hasNext())
                 loading.visibility = View.GONE
-                val adapter = InterAdapter(data)
+                val adapter = DetailsAdapter(data)
                 recycler.layoutManager = LinearLayoutManager(this)
                 recycler.adapter = adapter
                 adapter.setOnItemClickListener { adapter1, _, position ->
-                    val entity = adapter1.data[position] as DataEntity
-                    val i = Intent(this,DetailsActivity::class.java)
-                    i.putExtra("data", entity)
+                    val url2 = (adapter1.data[position] as DataEntity).imageUrl
+                    val i = Intent(this, PreviewActivity::class.java)
+                    i.putExtra("url", url2)
                     startActivity(i)
                 }
             }
             .broken {
                 // handle exception here
                 loading.visibility = View.GONE
-                Log.i("xxxxxxH",it.toString())
+                Log.i("xxxxxxH", it.toString())
             }
             .execute()
     }
